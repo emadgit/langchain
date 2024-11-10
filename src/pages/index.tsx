@@ -5,7 +5,7 @@ import therapist from "/public/media/therapist-02.png";
 import userAvatar from "/public/media/user-02.png";
 import { ThreeDots } from "react-loader-spinner";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import useScreenSize from "~/hooks/screenSize";
 
 interface State {
@@ -13,9 +13,12 @@ interface State {
   userPrompts: string[];
   therapistAnswer: string[];
   isThearapistTyping: boolean;
+  screenHeight: number;
 }
 
 export default function Home() {
+  const divRef = useRef<HTMLDivElement>(null);
+
   const mutation = api.langchain.chat.useMutation({
     onSuccess: (data) => {
       if (data) {
@@ -24,15 +27,24 @@ export default function Home() {
           therapistAnswer: [...prevState.therapistAnswer, data],
           isThearapistTyping: false,
         }));
+        scrollToBottom();
       }
     },
   });
+
+  useEffect(() => {
+    setState((prevState) => ({
+      ...prevState,
+      screenHeight: screenHeight,
+    }));
+  }, []);
 
   const [state, setState] = useState<State>({
     prompt: "",
     userPrompts: [],
     therapistAnswer: [],
     isThearapistTyping: false,
+    screenHeight: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +52,18 @@ export default function Home() {
       ...state,
       prompt: e.target.value,
     });
+  };
+
+  const scrollToBottom = () => {
+    if (divRef.current) {
+      divRef.current.scrollTop = divRef.current.scrollHeight;
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handlePrompt();
+    }
   };
 
   const screenHeight = (useScreenSize()?.height as number) - 100;
@@ -63,8 +87,9 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div
-          className="top-0 flex w-full flex-col items-start justify-start gap-4 overflow-scroll p-8"
+          className="top-0 flex h-full w-full flex-col items-start justify-start gap-4 overflow-scroll bg-emerald-900 p-8 md:h-full"
           style={{ height: `${screenHeight}px` }}
+          ref={divRef}
         >
           <div className="flex w-full flex-row items-start justify-start gap-6 md:items-center">
             <Image
@@ -77,7 +102,7 @@ export default function Home() {
               }}
               alt="therapist-01"
             />
-            <p className="rounded-md bg-[#2e8b57] p-3 text-sm font-normal text-white">
+            <p className="whitespace-pre-line break-words rounded-md bg-[#2e8b57] p-3 text-sm font-normal leading-relaxed text-white shadow-md md:text-base lg:text-lg">
               Hello, I am your AI therapist. How can I help you today?
             </p>
           </div>
@@ -89,7 +114,7 @@ export default function Home() {
             >
               {/* User message */}
               <div className="flex w-full flex-row items-center justify-end gap-6 md:items-center">
-                <p className="rounded-md bg-[#264577] p-3 text-sm font-normal text-white">
+                <p className="whitespace-pre-line break-words rounded-md bg-[#264577] p-3 text-sm font-normal leading-relaxed text-white shadow-md md:text-base lg:text-lg">
                   {prompt}
                 </p>
                 <Image
@@ -106,7 +131,7 @@ export default function Home() {
 
               {/* Therapist response */}
               {state.therapistAnswer[index] && (
-                <div className="flex w-full flex-row items-start justify-start gap-6 md:items-center">
+                <div className="flex w-full flex-row items-start justify-start gap-6 md:items-start">
                   <Image
                     src={therapist}
                     sizes="100vw"
@@ -117,7 +142,7 @@ export default function Home() {
                     }}
                     alt="therapist-avatar"
                   />
-                  <p className="rounded-md bg-[#2e8b57] p-3 text-sm font-normal text-white">
+                  <p className="whitespace-pre-line break-words rounded-md bg-[#2e8b57] p-3 text-sm font-normal leading-relaxed text-white shadow-md md:text-base lg:text-lg">
                     {state.therapistAnswer[index]}
                   </p>
                 </div>
@@ -139,18 +164,19 @@ export default function Home() {
           )}
         </div>
 
-        <div className="absolute bottom-0 flex w-full flex-row items-center justify-start gap-4 p-8">
+        <div className="absolute bottom-0 flex w-full flex-row items-center justify-start gap-4 bg-teal-950 p-7">
           <input
             type="text"
             className="w-full rounded-lg px-4 py-2 font-semibold text-[#15162c]"
             value={state.prompt}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
           />
           <button
             onClick={handlePrompt}
             className="w-48 rounded-lg bg-[#f9a826] px-4 py-2 font-semibold text-[#15162c]"
           >
-            Send Message
+            Send
           </button>
         </div>
       </main>
