@@ -1,6 +1,7 @@
 import { publicProcedure } from "~/server/api/trpc";
 import { z } from "zod";
 import { ChatOllama } from "@langchain/ollama";
+import { env } from "~/env.mjs";
 
 export const chat = publicProcedure
   .input(
@@ -14,6 +15,7 @@ export const chat = publicProcedure
         model: "llama3",
         temperature: 0,
         maxRetries: 2,
+        baseUrl: env.LANGCHAIN_ENDPOINT,
       });
 
       const aiMsg = await llm.invoke([

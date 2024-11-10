@@ -8,6 +8,10 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    LANGCHAIN_TRACING_V2: z.boolean(),
+    LANGCHAIN_ENDPOINT: z.string().url(),
+    LANGCHAIN_API_KEY: z.string(),
+    LANGCHAIN_PROJECT: z.string(),
   },
 
   /**
@@ -25,6 +29,10 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    LANGCHAIN_TRACING_V2: process.env.LANGCHAIN_TRACING_V2,
+    LANGCHAIN_ENDPOINT: process.env.LANGCHAIN_ENDPOINT,
+    LANGCHAIN_API_KEY: process.env.LANGCHAIN_API_KEY,
+    LANGCHAIN_PROJECT: process.env.LANGCHAIN_PROJECT,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
