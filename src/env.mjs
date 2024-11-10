@@ -8,7 +8,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
-    LANGCHAIN_TRACING_V2: z.boolean(),
+    LANGCHAIN_TRACING_V2: z.string(),
     LANGCHAIN_ENDPOINT: z.string().url(),
     LANGCHAIN_API_KEY: z.string(),
     LANGCHAIN_PROJECT: z.string(),
