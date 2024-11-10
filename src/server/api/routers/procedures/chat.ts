@@ -9,21 +9,26 @@ export const chat = publicProcedure
     }),
   )
   .mutation<string>(async ({ input }) => {
-    const llm = new ChatOllama({
-      model: "llama3",
-      temperature: 0,
-      maxRetries: 2,
-    });
+    try {
+      const llm = new ChatOllama({
+        model: "llama3",
+        temperature: 0,
+        maxRetries: 2,
+      });
 
-    const aiMsg = await llm.invoke([
-      [
-        "system",
-        "You are a helpful therapist that help user in mental health. Therapy for the user and give the best advice for the user sentence.",
-      ],
-      ["human", input.prompt],
-    ]);
+      const aiMsg = await llm.invoke([
+        [
+          "system",
+          "You are a helpful therapist that help user in mental health. Therapy for the user and give the best advice for the user sentence.",
+        ],
+        ["human", input.prompt],
+      ]);
 
-    console.log(aiMsg.content);
+      console.log(aiMsg.content);
 
-    return aiMsg.content as string;
+      return aiMsg.content as string;
+    } catch (error) {
+      console.error(error);
+      return "Sorry, I am having trouble understanding you. Please try again.";
+    }
   });

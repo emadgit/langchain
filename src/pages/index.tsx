@@ -69,6 +69,10 @@ export default function Home() {
   const screenHeight = (useScreenSize()?.height as number) - 100;
 
   const handlePrompt = async () => {
+    if (state.isThearapistTyping) {
+      return;
+    }
+
     setState((prevState) => ({
       ...prevState,
       userPrompts: [...prevState.userPrompts, prevState.prompt],
@@ -174,6 +178,7 @@ export default function Home() {
           />
           <button
             onClick={handlePrompt}
+            disabled={state.isThearapistTyping}
             className="w-48 rounded-lg bg-[#f9a826] px-4 py-2 font-semibold text-[#15162c]"
           >
             Send
