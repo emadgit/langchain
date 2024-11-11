@@ -15,7 +15,7 @@ export const chat = publicProcedure
         model: "llama3",
         temperature: 0,
         maxRetries: 2,
-        baseUrl: env.LANGCHAIN_ENDPOINT,
+        // baseUrl: env.LANGCHAIN_ENDPOINT,
       });
 
       const aiMsg = await llm.invoke([
